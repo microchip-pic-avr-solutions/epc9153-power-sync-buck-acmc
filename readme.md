@@ -1,6 +1,6 @@
 ![image](images/microchip.jpg) 
 
-## %repoDescritpion%
+## EPC9153 POWER SYNC BUCK ACMC
 
 Board Image if any.
 
