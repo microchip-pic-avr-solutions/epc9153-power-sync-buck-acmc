@@ -6,39 +6,33 @@
 <p>
   <center>
     Top View <br>
-    TODO:<a href="https://www.microchip.com/EPC9153" rel="nofollow">
+    <a href="https://www.microchip.com/DevelopmentTools/ProductDetails/PartNO/EPC9153" rel="nofollow">
       <img src="images/9153_top.jpg" alt="EPC9153 Top View" width="300">
 	</a>	
   </center>
 </p>
 
-##TODO Summary
+
+## Summary
 This code example demonstrates an average current mode control implementation for dsPIC33CK. It has specifically been developed for the EPC9153 high performance synchronous buck converter.
 
-The board starts up the buck converter automatically when power is applied to the board, providing a regulated output voltage of 20 V at the output of the converter. The startup procedure is controlled and executed by the power controller state machine and includes a configurable startup procedure with power-on delay, ramp up period and power good delay before dropping into constant regulation mode.
-An additional fault handler routine continuously monitors incoming ADC data and peripheral status bits and shuts down the power supply if the input voltage is outside the defined maximum range of 41.5 V to 59.5 V (UVLO/OVLO) or if the output voltage is more than 25.5 V out of regulation for more than 10 milliseconds.
+The board starts up the buck converter automatically when power is applied to the board, hence increasing the output voltage from 0 to its nominal value. The startup procedure is controlled and executed by the power controller state machine and includes a configurable startup procedure with power-on delay, ramp up period and power good delay before dropping into constant regulation mode.
+An additional fault handler routine continuously monitors incoming ADC data and peripheral status bits and shuts down the power supply if the input voltage is outside the defined maximum range of 41.5 V to 59.5 V (UVLO/OVLO) or if the output voltage is more than 25.5 V out of regulation for more than 10 milliseconds. 
 
-The PWM signals control the four switch array 
-
-A single, high-speed type IV (4P4Z) voltage mode controller with enforced PWM steering is used to automatically 
-create balanced phase currents in both phases of this interleaved converter. An underlying current balancing 
-scheme compensates component tolerances and deviations over temperature. A built-in adaptive gain control 
-algorithm stabilizes gain variations of the voltage loop controller during input- and output voltage transients, 
-stabilizing cross-over frequency and output impedance, supporting control bandwidths of 25 kHz, 
-for improved transient response, helping to minimize power distribution network (PDN) decoupling capacity.
+The digital control loop in this design enables the non-linear switch-over between control modes across load conditions and self-protecting over-power boost modes, expanding the support of extreme load dynamics of high-performance loads like CPUs and FPGAs. 
 
 #### Product Features:
   - Input Voltage: 44 V to 60 V
-  - Output Voltage: 20 V DC 
+  - Output Voltage: 12 to 20 V DC (20 V default setting) 
   - Switching Frequency: 400 kHz
   - Control Frequency: 400 kHz
-  -* Cross-Over Frequency: ~25 kHz (depends on VIN and if AGC is on/off)*
-  - *Phase Margin: ~ 50°*
-  - *Gain Margin: ~ 12 dB*
+  - Cross-Over Frequency: ~25 kHz (depends on VIN and if AGC is on/off)
+  - Phase Margin: ~ 50°
+  - Gain Margin: ~ 12 dB
 
 ## Related Documentation
 ##### Firmware Documentation
-  - TODO[EPC9153 Online Firmware Documentation](https://microchip-pic-avr-examples.github.io/EPC9153-power-sync-buck-acmc)
+  - [EPC9153 Online Firmware Documentation](https://microchip-pic-avr-examples.github.io/EPC9153-power-sync-buck-acmc)
 
 ##### Firmware Documentation
   - [EPC9153 250W High Performance Synchronous Buck Converter Reference Design Product Website](https://www.microchip.com/DevelopmentTools/ProductDetails/PartNO/EPC9153)
@@ -60,6 +54,7 @@ Microchip devices used in this reference design:
 
 EPC devices used in this reference design
   - [EPC2038: 100 V, 246 A Enhancement-Mode GaN Power Transistor](https://epc-co.com/epc/Products/eGaNFETsandICs/EPC2038.aspx)
+  - [EPC2218: 100 V, 241 A Enhancement-Mode GaN Power Transistor](https://epc-co.com/epc/Products/eGaNFETsandICs/EPC2218.aspx)
 
 ## Setup
 The board comes programmed and ready to be used when unpacked. No reprogramming of the target device is required to operate the board unless features or settings such as the nominal output voltage or start-up timing need to be modified. 
@@ -90,7 +85,7 @@ In case firmware based features need to be changed, the Microchip dsPIC33CK cont
 ## Operation
 The converter is starting up automatically when more than 41.5 V DC are applied across the input terminals of the EPC9153.  Please read the [EPC9153 Quick Start Guide](https://epc-co.com/epc/documents/guides/EPC9153_qsg.pdf) to get detailed information about the requirements for setup and operation of this reference design.
 
-## TODO Firmware Quick-Start Guide
+## Firmware Quick-Start Guide
 
 ##### 1) Buck Converter State Machine
 
@@ -155,7 +150,7 @@ Please refer to the user guide of PowerSmart&trade; DCLD which is included in th
 
 ##### 4) User Control
 
-No user control interface has been added to the firmware. Any change to the firmware and fundamental operation of the reference design, including reprogramming of the nominal output voltage can be done by editing the hardware-specific values in the hardware description header file 'epc9143_r40_hwdescr.h' located in 'Project Manager => Header Files/Config'
+No user control interface has been added to the firmware. Any change to the firmware and fundamental operation of the reference design, including reprogramming of the nominal output voltage can be done by editing the hardware-specific values in the hardware description header file 'epc9153_r40_hwdescr.h' located in 'Project Manager => Header Files/Config'
 
 Converter settings in this file are defined as physical values such as Volt, Ampere, Ohm, etc. Each defined value is converted into binary numbers by so-called macros, at compile time. Thus, users do not have to convert values manually.
 
@@ -163,15 +158,15 @@ Converter settings in this file are defined as physical values such as Volt, Amp
 To program the converter to provide a nominal output voltage different from the 12 V DC set by default, follow these steps:
 
   - Open the project in MPLAB X® IDE
-  - Navigate to 'Header Files/Config/epc9143_r40_hwdescr.h' using the Project Manager on the left of the main window
+  - Navigate to 'Header Files/Config/epc9153_r40_hwdescr.h' using the Project Manager on the left of the main window
   - Go to line #325 (see below)
   - Change the give settings as desired
   - Build the program
-  - Remove power from the input of the EPC9531 test fixture
-  - Connect a valid ICSP programming device (e.g. MPLAB ICD4, MPLAB PICkit4) to the PC and the EPC9531 test fixture (see [EPC9531 Quick Start Guide](https://epc-co.com/epc/documents/guides/EPC9531_qsg.pdf) for details)
+  - Remove power from the input of the EPC9153 board
+  - Connect a valid ICSP programming device (e.g. MPLAB ICD4, MPLAB PICkit4) to the PC and the EPC9153 board
   - Program the device with the target device being powered by the debugger/programmer
-  - Disconnect the ICSP programming device from the EPC9531 test fixture
-  - Apply valid input voltage across the input terminals of EPC9531 and observe the output of the EPC9143 reference design
+  - Disconnect the ICSP programming device from the EPC9153 board
+  - Apply valid input voltage across the input terminals of EPC9153 and observe the output of the EPC9153 reference design
 
 The setting for the nominal output voltage is found in lines #324 through #326.
 
