@@ -24,7 +24,7 @@ An additional fault handler routine continuously monitors incoming ADC data and 
   - Input Voltage: 44 V to 60 V
   - Output Voltage: 12 to 20 V DC (20 V default setting) 
   - Switching Frequency: 400 kHz
-  - Control Frequency: 200 kHz
+  - Control Frequency: 400 kHz
   - Cross-Over Frequency: ~10 kHz 
   - Phase Margin: ~ 60°
   - Gain Margin: ~ 12 dB
