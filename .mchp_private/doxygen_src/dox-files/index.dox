@@ -109,6 +109,10 @@
 
 //Abstraction Layer Defines index
 /**
+ @defgroup hardware-abstraction Hardware Abstraction
+ @ingroup abstraction-layer 
+ @brief 
+
  @defgroup microcontroller-abstraction Microcontroller Abstraction
  @ingroup abstraction-layer 
  @brief 
