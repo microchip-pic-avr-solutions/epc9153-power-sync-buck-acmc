@@ -17,7 +17,7 @@
 This code example demonstrates an average current mode control implementation for dsPIC33CK. It has specifically been developed for the EPC9153 high performance synchronous buck converter.
 
 The board starts up the buck converter automatically when power is applied to the board, hence increasing the output voltage from 0 to its nominal value. The startup procedure is controlled and executed by the power controller state machine and includes a configurable startup procedure with power-on delay, ramp up period and power good delay before dropping into constant regulation mode.
-An additional fault handler routine continuously monitors incoming ADC data and peripheral status bits and shuts down the power supply if the input voltage is outside the defined maximum range of 41.5 V to 59.5 V (UVLO/OVLO) or if the output voltage is more than 25.5 V out of regulation for more than 10 milliseconds. 
+An additional fault handler routine continuously monitors incoming ADC data and peripheral status bits and shuts down the power supply if the input voltage is outside the defined maximum range of 41.5 V to 59.5 V (UVLO/OVLO) or if the output voltage is more than +/-0.5 V out of regulation for more than 10 milliseconds. 
  
 
 #### Product Features:
@@ -39,15 +39,17 @@ An additional fault handler routine continuously monitors incoming ADC data and 
   - [EPC9153 Reference Design Schematics](https://epc-co.com/epc/documents/schematics/EPC9153_Schematic.pdf)
 
 ##### Device Support
-  - [dsPIC33CK32MP102 Product Website](https://www.microchip.com/dsPIC33CK32MP102)
+*Featured Microchip Technology Products:*
+- [dsPIC33CK32MP102 Product Website](https://www.microchip.com/dsPIC33CK32MP102)
   - [dsPIC33CKxxMP10x Device Family Data Sheet](https://www.microchip.com/DS70005363)
   - [dsPIC33CKxxMP10x Device Family Silicon Errata and Data Sheet Clarification](https://www.microchip.com/DS80000809)
-  - [MCP6C02 Shunt Amplifier Product Website](https://www.microchip.com/MCP6C02)
-  - [MCP6C02 Zero-Drift, High-Side Current Sense Amplifier](https://www.microchip.com/DS20006129)
-    
-  - [EPC2218: 100 V, 241 A Enhancement-Mode GaN Power Transistor](https://epc-co.com/epc/Products/eGaNFETsandICs/EPC2218.aspx)
+- [MCP6C02 Shunt Amplifier Product Website](https://www.microchip.com/MCP6C02)
+  - [MCP6C02 Zero-Drift, High-Side Current Sense Amplifier Data Sheet](https://www.microchip.com/DS20006129)
+
+*Featured Efficient Power Conversion (EPC) Products:*
+- [EPC2218: 100 V, 241 A Enhancement-Mode GaN Power Transistor](https://epc-co.com/epc/Products/eGaNFETsandICs/EPC2218.aspx)
   - [EPC2218 Data Sheet](https://epc-co.com/epc/Portals/0/epc/documents/datasheets/EPC2218_datasheet.pdf)
-  - [EPC2038 Enhancement Mode Power Transistor with Integrated Reverse Gate Clamp Diode](https://epc-co.com/epc/Products/eGaNFETsandICs/EPC2038.aspx)
+- [EPC2038 Enhancement Mode Power Transistor with Integrated Reverse Gate Clamp Diode](https://epc-co.com/epc/Products/eGaNFETsandICs/EPC2038.aspx)
   - [EPC2038 Data Sheet](https://epc-co.com/epc/Portals/0/epc/documents/datasheets/EPC2038_datasheet.pdf)
 
 
@@ -75,7 +77,7 @@ The board comes programmed and ready to be used when unpacked. No reprogramming 
 
 <p>
   <center>
-      <img src="images/9153_top_setup.png" alt="EPC9153 Test Connections - Top View" width="620">
+      <img src="images/9153_top_setup.png" alt="EPC9153 Test Connections - Top View" width="320">
 	</a>
   <br>
   EPC9153 Test Connections - Top View
@@ -84,7 +86,7 @@ The board comes programmed and ready to be used when unpacked. No reprogramming 
 
 <p>
   <center>
-      <img src="images/9153_connector.png" alt="EPC9153 Measurement Connection" width="680">
+      <img src="images/9153_connector.png" alt="EPC9153 Measurement Connection" width="480">
 	</a>
   <br>
   EPC9153 Measurement Connection
@@ -130,9 +132,9 @@ After the Power Good Delay has expired, the converter drops into nominal operati
 i) Suspend/Error
 If the power controller is shut down and reset by external commands (e.g. fault handler detecting a fault condition or through user-interaction), the state machine is switching into the SUSPEND state, which disables the PWM outputs and control loop execution, clears the control histories and resets the state machine back to RESET
 
-##### 2) Cycle-by-Cycle Voltage Control Loop
+##### 2) Cycle-by-Cycle Control Loop
 
-This firmware uses a two digital type II controllers to close the feedback loop in average current mode control. The two loops in the average current mode control are the current loop and voltage loop. The EPC9153 board is controlled by the outer voltage loop providing a reference to the inner average current loop. These digital loops read the most recent ADC sample of the output current and output voltage, then process the derived values through digital compensation filters. The numeric output is checked and, when necessary, clamped to user-defined minimum/maximum thresholds before being written to the PWM duty cycle register. 
+This firmware uses two digital type II controllers to close the feedback loop in average current mode control. The controller is comprised of two cascaded loops. The outer voltage feedback loop determines the output voltage error and calculates the required reference for the inner average current feedback loop. The inner average current loop determines the most recent deviation between the new reference and most recent feedback signal and adjusts the PWM duty cycle to meet the power demand and correct the output voltage error. The numeric output of each loop is checked against defined minima and maxima thresholds and, when necessary, clamped to these user-defined thresholds to protect the hardware and prevent loop saturation. 
 
 <p>
   <center>
@@ -153,7 +155,8 @@ This additional design software is available for download on Github Pages:
 
   - [PowerSmart&trade; Digital Control Library Designer Github Page](https://areiter128.github.io/DCLD)
 
-Once installed, the controller configuration can be modified. The most recent configuration can be opened from within the MPLAB X® IDE by right-clicking on the file 'DPSK3_VMC.dcld' located in the Important Files folder of the Project Manager. When right-clicked, select 'Open In System' to open the configuration in PowerSmart&trade; DCLD. 
+Once installed, the controller configuration can be modified. The most recent configuration can be opened from within the MPLAB X® IDE by right-clicking on the respective control loop configuration file 'xxx_loop.dcld' located in the *Important Files* folder of the Project Manager. Each control loop is configured in its individual configuration file named 'v_loop.dcld' for voltage loops and 'i_loop.dcld' for current loops. 
+When right-clicked, select 'Open In System' to open the configuration in PowerSmart&trade; DCLD. 
 
 Please refer to the user guide of PowerSmart&trade; DCLD which is included in the software and can be opened from the help menu of the application.
 
@@ -183,7 +186,7 @@ The setting for the nominal output voltage is set using these defines
     #define BUCK_VOUT_TOLERANCE_MIN     (float)0.100   // Output voltage tolerance [+/-]
 
 ###### Please note:
-The tolerance settings above include the transient response at a maximum load step. The value for maximum output voltage tolerance 'BUCK_VOUT_TOLERANCE_MAX' is observed by the fault handler. Should the output voltage reading divert from the most recent reference voltage value by more than the given range, the converter will be shut down and a REGULATION ERROR will be indicated. The power supply will automatically recover as soon as the fault condition has been cleared and the recover delay period specified by BUCK_REGERR_RECOVERY_DELAY in line #527 of the EPC9153 hardware description header file has expired.
+The tolerance settings above include the transient response at a maximum load step. The value for maximum output voltage tolerance 'BUCK_VOUT_TOLERANCE_MAX' is observed by the fault handler. Should the output voltage reading divert from the most recent reference voltage value by more than the given range, the converter will be shut down and a REGULATION ERROR will be indicated. The power supply will automatically recover as soon as the fault condition has been cleared and the recovery delay period specified by BUCK_REGERR_RECOVERY_DELAY, declared in the EPC9148 hardware description header file, has expired. The fault trip sensitivity can be adjusted by changing the BUCK_REGERR_TRIP_DELAY declaration.
 
 (line numbers given may be subject to change)
 
@@ -197,7 +200,7 @@ This code examples includes an alternative, proportional control loop which is c
 ###### PLEASE NOTE:
 PROPORTIONAL CONTROLLERS ARE BY DEFAULT UNSTABLE AND NOT SUITED TO REGULATE THE OUTPUT OF A POWER SUPPLY UNDER NORMAL OPERATING CONDITIONS. DURING A PLANT MEASUREMENT IT IS MANDATORY THAT INPUT VOLTAGE AND LOAD REMAIN STABLE AND DO NOT CHANGE. 
 
-FOR MORE INFORMATION ABOUT HOW TO CONDUCT A POWER PLANT MEASUREMENT, PLEASE READ THE SECTIONS IN THE PowerSmart&trade; DCLD USER GUIDE.
+FOR MORE INFORMATION ABOUT HOW TO CONDUCT A POWER PLANT MEASUREMENT, PLEASE REFER TO SECTION 6.1 OF THE PowerSmart&trade; DCLD USER GUIDE.
 
 _________________________________________________
 (c) 2020, Microchip Technology Inc.
